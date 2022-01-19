@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState } from "react";
-import logo from "../logo.png";
 import EditUserDialog from "./EditUserDialog";
 import { ColorButton } from "./StyledButton";
 const API_URL = process.env.REACT_APP_API;

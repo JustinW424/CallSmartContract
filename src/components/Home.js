@@ -1,5 +1,4 @@
 import { Divider, Typography } from "@mui/material";
-import axios from "axios";
 import React, { useState } from "react";
 import { ColorButton } from "./StyledButton"
 import Web3 from "web3";
@@ -9,7 +8,6 @@ import abi from "../utils/abi.json";
 const API_URL = process.env.REACT_APP_API;
 
 export default function Home() {
-  const [address, setAddress] = useState("");
   const [reserved, setReserved] = useState("");
   const [endOfPending, setEndOfPending] = useState("");
   const [pendingToken, setPendingToken] = useState("");
@@ -23,13 +21,9 @@ export default function Home() {
   const [amountWithdraw, setAmountWithdraw] = React.useState("");
   const [newOwner, setNewOwner] = React.useState("");
   const [pendingPeriodinDays, setPendingPeriodinDays] = React.useState("");
-  const [userInfo, setUserInfo] = useState({});
   const web3 = new Web3(window.ethereum);
   const contract = new web3.eth.Contract(abi, contractAddress);
 
-  const getAddress = (event) => {
-    setAddress(event.target.value.toLowerCase());
-  }
   const getMinDeposit = (event) => {
     setMinDeposit(event.target.value);
   }
@@ -45,36 +39,10 @@ export default function Home() {
   const getPendingPeriodinDays = (event) => {
     setNewOwner(event.target.value);
   }
-  // const onSearch = async () => {
-  //   const url = `${API_URL}/users/search`;
-  //   async function getData() {
-  //     axios.post(url, { address: address })
-  //       .then(res => {
-  //         if (res.data.exist === true) {
-  //           setUserInfo(res?.data?.user);
-  //           setOpen(true);
-  //         }
-  //       })
-  //   }
-  //   getData();
-  // }
 
   const getAmount = (event) => {
     setAmountDeposit(event.target.value);
   }
-  // const onSearch = async () => {
-  //   const url = `${API_URL}/users/search`;
-  //   async function getData() {
-  //     axios.post(url, { address: address })
-  //       .then(res => {
-  //         if (res.data.exist === true) {
-  //           setUserInfo(res?.data?.user);
-  //           setOpen(true);
-  //         }
-  //       })
-  //   }
-  //   getData();
-  // }
 
   const onQuery = async (idx) => {
     const chainId = await window.ethereum.request({ method: "eth_chainId" });
@@ -121,7 +89,7 @@ export default function Home() {
           });
         break;
       case 4:
-        const val4 = await contract.methods.getReward().send({
+        await contract.methods.getReward().send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -131,7 +99,7 @@ export default function Home() {
           });
         break;
       case 5:
-        const val5 = await contract.methods.renounceOwnership().send({
+        await contract.methods.renounceOwnership().send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -142,7 +110,7 @@ export default function Home() {
         break;
       case 6:
         console.log("temple-min-deposit:", minDeposit)
-        const val6 = await contract.methods.setMinDeposit(Number(minDeposit)).send({
+        await contract.methods.setMinDeposit(Number(minDeposit)).send({
           from: _account[0],
           value: minDeposit,
         })
@@ -154,7 +122,7 @@ export default function Home() {
         break;
       case 7:
         console.log("temple-min-deposit:", epoch)
-        const val7 = await contract.methods.startStaking(Number(epoch)).send({
+        await contract.methods.startStaking(Number(epoch)).send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -164,7 +132,7 @@ export default function Home() {
           });
         break;
       case 8:
-        const val8 = await contract.methods.startWithdrawingProcess(Number(amountWithdraw)).send({
+        await contract.methods.startWithdrawingProcess(Number(amountWithdraw)).send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -174,7 +142,7 @@ export default function Home() {
           });
         break;
       case 9:
-        const val9 = await contract.methods.transferOwnership(Number(newOwner)).send({
+        await contract.methods.transferOwnership(newOwner).send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -184,7 +152,7 @@ export default function Home() {
           });
         break;
       case 10:
-        const val10 = await contract.methods.updateStaking().send({
+        await contract.methods.updateStaking().send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -194,7 +162,7 @@ export default function Home() {
           });
         break;
       case 11:
-        const val11 = await contract.methods.updateWithdrawPendingPeriod(Number(pendingPeriodinDays)).send({
+        await contract.methods.updateWithdrawPendingPeriod(Number(pendingPeriodinDays)).send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -204,7 +172,7 @@ export default function Home() {
           });
         break;
       case 12:
-        const val12 = await contract.methods.withdrawReserved().send({
+        await contract.methods.withdrawReserved().send({
           from: _account[0],
         })
           .then(async (res) => {
@@ -228,7 +196,7 @@ export default function Home() {
             pendigToken
             <br></br>
             <ColorButton onClick={() => onQuery(0)}>Query</ColorButton>
-            <input type="text" placeholder="Returned Value from pendingTokenAddress" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/3" onChange={getAddress} value={pendingToken}></input>
+            <input type="text" placeholder="Returned Value from pendingTokenAddress" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/3" value={pendingToken}></input>
           </Typography>
 
         </div>
@@ -239,8 +207,8 @@ export default function Home() {
             withdrawpending
             <br></br>
             <ColorButton onClick={() => onQuery(1)}>Query</ColorButton>
-            <input type="text" placeholder="Reserved" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/4" onChange={getAddress} value={reserved}></input>
-            <input type="text" placeholder="End Of Pending" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/4" onChange={getAddress} value={endOfPending}></input>
+            <input type="text" placeholder="Reserved" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/4" value={reserved}></input>
+            <input type="text" placeholder="End Of Pending" className="bg-opacity-0 m-10 pr-5 pl-5 border-collapse border border-black rounded-xl p-4 text-xl w-1/4" value={endOfPending}></input>
           </Typography>
 
         </div>
